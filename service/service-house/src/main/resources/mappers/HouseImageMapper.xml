@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.HouseImageMapper">
+    <sql id="com">
+        id,house_id,image_name,image_url,type,create_time,update_time,is_deleted
+    </sql>
+    <select id="findHouseImageByHouseIdAndType" resultType="HouseImage">
+        select <include refid="com"/>
+        from hse_house_image hh
+        where hh.house_id = #{houseId} and hh.type = #{type} and is_deleted = 0
+    </select>
+    <!--上传图片之后将图片保存进数据库-->
+    <insert id="save">
+        insert into hse_house_image
+        (
+        house_id,image_name,image_url,type,create_time,update_time,is_deleted
+        )
+        value
+        (
+        #{houseId},#{imageName},#{imageUrl},#{type},now(),now(),0
+        )
+    </insert>
+    <!--删除-->
+    <update id="delete">
+        update hse_house_image set is_deleted = 1 where id = #{id}
+    </update>
+</mapper>

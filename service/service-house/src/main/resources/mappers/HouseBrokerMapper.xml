@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.HouseBrokerMapper">
+    <sql id="com">
+        id,house_id,broker_id,broker_name,broker_head_url,create_time,update_time,is_deleted
+    </sql>
+    <!--根据房源id查询所有的所属经纪人列表-->
+    <select id="findHouseBrokerByHouseId" resultType="HouseBroker">
+        select <include refid="com"/>
+        from hse_house_broker
+        where house_id = #{houseId} and is_deleted = 0
+    </select>
+    <!--新增经纪人-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        hse_house_broker (
+        id,
+        house_id,
+        broker_id,
+        broker_name,
+        broker_head_url
+        )
+         value (
+        #{id},
+        #{houseId},
+        #{brokerId},
+        #{brokerName},
+        #{brokerHeadUrl}
+        )
+    </insert>
+    <!--修改经纪人回显-->
+    <select id="getById" resultType="HouseBroker">
+        select <include refid="com"/>
+        from hse_house_broker where id = #{id}
+    </select>
+
+    <update id="update" >
+        update hse_house_broker set
+        <if test="houseId != null and houseId != ''">
+            house_id = #{houseId} ,
+        </if>
+        <if test="brokerId != null and brokerId != ''">
+            broker_id = #{brokerId} ,
+        </if>
+        <if test="brokerName != null and brokerName != ''">
+            broker_name = #{brokerName} ,
+        </if>
+        <if test="brokerHeadUrl != null and brokerHeadUrl != ''">
+            broker_head_url = #{brokerHeadUrl} ,
+        </if>
+        update_time =  now()
+        where
+        id = #{id}
+    </update>
+    <!--删除房源-->
+    <update id="delete">
+        update hse_house_broker set is_deleted = 1 where id = #{id}
+    </update>
+</mapper>

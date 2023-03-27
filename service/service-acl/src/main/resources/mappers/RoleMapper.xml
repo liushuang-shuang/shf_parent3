@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.RoleMapper">
+    <!--定义公共片段-->
+    <sql id="com">
+        id,role_name,role_code,description,create_time,update_time,is_deleted
+    </sql>
+    <!--查询所有角色-->
+    <select id="findAll" resultType="com.atguigu.entity.Role">
+        select <include refid="com"/> from acl_role where is_deleted = 0
+    </select>
+    <!--新增角色-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into acl_role(id,role_name,role_code,description)
+        values (
+        #{id},
+        #{roleName},
+        #{roleCode},
+        #{description}
+        )
+    </insert>
+    <!--根据id查询用户-->
+    <select id="getById" parameterType="long" resultType="Role">
+        select <include refid="com"/> from acl_role where id = #{id}
+    </select>
+    <!--修改角色信息-->
+    <update id="update">
+        update acl_role
+        <set>
+            <if test="roleName != null and roleName != ''">
+                role_name=#{roleName},
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                role_code=#{roleCode},
+            </if>
+            <if test="description != null and description != ''">
+                description=#{description},
+            </if>
+            update_time = now()
+            where
+            id = #{id}
+        </set>
+    </update>
+    <!--删除角色-->
+    <delete id="delete" parameterType="long">
+        update acl_role set is_deleted = 1,update_time = now() where id = #{id}
+    </delete>
+    <!--分页查询-->
+    <select id="findPage" resultType="Role">
+        select <include refid="com"/> from acl_role <include refid="com2"/> order by id desc
+    </select>
+
+    <sql id="com2">
+        <where>
+            <if test="roleName != null and roleName !=''">
+                role_name like concat('%',#{roleName},'%')
+            </if>
+            and is_deleted = 0
+        </where>
+    </sql>
+</mapper>
